@@ -1,20 +1,21 @@
 #!/bin/bash
 
-# Check input
-if [ $# -ne 1 ]; then
-  echo "Usage: ./init-gh-repo.sh <project-name>"
-  echo "Example: ./init-gh-repo.sh my-app"
+# Check for project name and GitHub repo URL
+if [ $# -ne 2 ]; then
+  echo "Usage: ./setup-git.sh <project-name> <github-repo-url>"
+  echo "Example: ./setup-git.sh my-app https://github.com/your-username/my-app.git"
   exit 1
 fi
 
 PROJECT_NAME=$1
+REPO_URL=$2
 
-# Create directory and initialize repo
+# Create project directory and initialize Git
 mkdir $PROJECT_NAME
 cd $PROJECT_NAME
 git init
 
-# Create initial README and commit
+# Create README and first commit
 echo "# $PROJECT_NAME" > README.md
 git add .
 git commit -m "Initial commit"
@@ -22,21 +23,16 @@ git commit -m "Initial commit"
 # Rename default branch to main
 git branch -M main
 
-# Create repo on GitHub using CLI
-gh repo create $PROJECT_NAME --public --source=. --remote=origin --push
-
-# Create and push dev branch
-git checkout -b dev
-git push -u origin dev
-
 # Go back to main and push
 git checkout main
-git push -u origin main
+git remote add origin $REPO_URL
+git push --set-upstream origin main
 
-# Set main as default branch on GitHub
-gh repo edit --default-branch main
+# Create and switch to dev branch
+git checkout -b dev
+git push --set-upstream $REPO_URL dev
 
-# Done
+# Print manual next step
 echo ""
-echo "✅ Repo '$PROJECT_NAME' set up with 'main' and 'dev' branches."
-echo "👉 'main' is set as default branch on GitHub."
+echo "✅ Project initialized with main and dev branches."
+echo "👉 Now go to GitHub and set 'main' as the default branch under Settings → Branches."
