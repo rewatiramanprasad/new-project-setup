@@ -11,4 +11,4 @@ Save as ```init-gh-repo.sh```
 - Run it
 
 
-```./init-gh-repo.sh my-new-project```
+``` ./init-gh-repo.sh <project-name> <github-repo-url>```
